@@ -32,6 +32,9 @@ def main(args):
 
     sampler = BatchSampler(args.env_name, batch_size=args.fast_batch_size,
         num_workers=args.num_workers)
+
+    #continuous_actions = True
+
     if continuous_actions:
         policy = NormalMLPPolicy(
             int(np.prod(sampler.envs.observation_space.shape)),

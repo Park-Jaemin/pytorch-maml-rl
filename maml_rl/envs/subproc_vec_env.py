@@ -48,7 +48,9 @@ class EnvWorker(mp.Process):
                 observation = self.try_reset()
                 self.remote.send((observation, self.task_id))
             elif command == 'reset_task':
-                self.env.unwrapped.reset_task(data)
+                #self.env.unwrapped.reset_task(data)
+                self.env = gym.make(data)
+                print(data)
                 self.remote.send(True)
             elif command == 'close':
                 self.remote.close()
@@ -109,7 +111,7 @@ class SubprocVecEnv(gym.Env):
         if self.closed:
             return
         if self.waiting:
-            for remote in self.remotes:            
+            for remote in self.remotes:
                 remote.recv()
         for remote in self.remotes:
             remote.send(('close', None))

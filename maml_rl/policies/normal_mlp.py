@@ -8,10 +8,10 @@ from collections import OrderedDict
 from maml_rl.policies.policy import Policy, weight_init
 
 class NormalMLPPolicy(Policy):
-    """Policy network based on a multi-layer perceptron (MLP), with a 
-    `Normal` distribution output, with trainable standard deviation. This 
-    policy network can be used on tasks with continuous action spaces (eg. 
-    `HalfCheetahDir`). The code is adapted from 
+    """Policy network based on a multi-layer perceptron (MLP), with a
+    `Normal` distribution output, with trainable standard deviation. This
+    policy network can be used on tasks with continuous action spaces (eg.
+    `HalfCheetahDir`). The code is adapted from
     https://github.com/cbfinn/maml_rl/blob/9c8e2ebd741cb0c7b8bf2d040c4caeeb8e06cc95/sandbox/rocky/tf/policies/maml_minimal_gauss_mlp_policy.py
     """
     def __init__(self, input_size, output_size, hidden_sizes=(),
@@ -45,5 +45,4 @@ class NormalMLPPolicy(Policy):
         mu = F.linear(output, weight=params['mu.weight'],
             bias=params['mu.bias'])
         scale = torch.exp(torch.clamp(params['sigma'], min=self.min_log_std))
-
         return Normal(loc=mu, scale=scale)

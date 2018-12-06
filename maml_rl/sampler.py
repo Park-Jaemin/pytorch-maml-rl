@@ -1,6 +1,7 @@
 import gym
 import torch
 import multiprocessing as mp
+import numpy as np
 
 from maml_rl.envs.subproc_vec_env import SubprocVecEnv
 from maml_rl.episode import BatchEpisodes
@@ -15,7 +16,7 @@ class BatchSampler(object):
         self.env_name = env_name
         self.batch_size = batch_size
         self.num_workers = num_workers
-        
+
         self.queue = mp.Queue()
         self.envs = SubprocVecEnv([make_env(env_name) for _ in range(num_workers)],
             queue=self.queue)
@@ -32,7 +33,7 @@ class BatchSampler(object):
         while (not all(dones)) or (not self.queue.empty()):
             with torch.no_grad():
                 observations_tensor = torch.from_numpy(observations).to(device=device)
-                actions_tensor = policy(observations_tensor, params=params).sample()
+                actions_tensor = policy(observations_tensor.float(), params=params).sample()
                 actions = actions_tensor.cpu().numpy()
             new_observations, rewards, dones, new_batch_ids, _ = self.envs.step(actions)
             episodes.append(observations, actions, rewards, batch_ids)
@@ -45,5 +46,7 @@ class BatchSampler(object):
         return all(reset)
 
     def sample_tasks(self, num_tasks):
-        tasks = self._env.unwrapped.sample_tasks(num_tasks)
+        tasks = ['Alien-ram-v0', 'BankHeist-ram-v0', 'Berzerk-ram-v0', 'Boxing-ram-v0', 'Centipede-ram-v0', 'ChopperCommand-ram-v0', 'DoubleDunk-ram-v0', 'FishingDerby-ram-v0', 'Frostbite-ram-v0', 'IceHockey-ram-v0', 'Jamesbond-ram-v0', 'Kangaroo-ram-v0', 'Krull-ram-v0', 'Pitfall-ram-v0', 'PrivateEye-ram-v0', 'Riverraid-ram-v0', 'RoadRunner-ram-v0', 'Seaquest-ram-v0', 'Solaris-ram-v0', 'StarGunner-ram-v0', 'Tennis-ram-v0', 'Venture-ram-v0', 'YarsRevenge-ram-v0', 'Zaxxon-ram-v0']
+        return np.random.choice(tasks, num_tasks)
+        #tasks = ['HalfCheetahDir-v1']
         return tasks
