@@ -32,13 +32,18 @@ python3 main.py --env-name BankHeist-ram-v0
 
 To see graph of the log
  ```
- tensorboard --logdir='./logs' --port=6006
+ tensorboard --logdir='./logs'
  ```
  
  ## Run reinforcement
 To run REINFORCEMENT for an environment
 ```
 python3 reinforcement.py --env-name Alien-ram-v0 --trained-model True --trained-model-dir saves/Atari/policy-200.pt
+```
+
+To see graph of the log
+```
+tensorboard --logdir='./reinforcement/logs/Atari/'
 ```
 
 ## Algorithm
