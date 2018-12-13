@@ -2,11 +2,7 @@ import numpy as np
 import multiprocessing as mp
 import gym
 import sys
-is_py2 = (sys.version[0] == '2')
-if is_py2:
-    import Queue as queue
-else:
-    import queue as queue
+import queue as queue
 
 class EnvWorker(mp.Process):
     def __init__(self, remote, env_fn, queue, lock):
