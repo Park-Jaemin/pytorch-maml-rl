@@ -1,6 +1,5 @@
 # Reinforcement Learning with Model-Agnostic Meta-Learning (MAML)
-
-This repository contains code for MAML on Atari environment.
+[Model-Agnostic Meta-Learning (MAML)](https://arxiv.org/abs/1703.03400) pytorch implementation for Atari environment.
 
 ## Getting started
 To avoid any conflict with your existing Python setup, and to keep this project self-contained, it is suggested to work in a virtual environment with [`virtualenv`](http://docs.python-guide.org/en/latest/dev/virtualenvs/). To install `virtualenv`:
