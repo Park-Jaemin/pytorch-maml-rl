@@ -15,7 +15,7 @@ def total_rewards(episodes_rewards, aggregation=torch.mean):
 
 
 def main(args):
-    writer = SummaryWriter('./reinforcement/logs{0}'.format(args.output_folder))
+    writer = SummaryWriter('./reinforcement/logs/{0}'.format(args.output_folder))
     save_folder = './reinforcement/saves/{0}'.format(args.output_folder)
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
@@ -38,8 +38,10 @@ def main(args):
         iter = iter + 1
         print(iter, 'th iter is running')
 
+        episodes = []
         sampler.reset_task(args.env_name)
-        episodes = sampler.sample(params=policy.staet_dict())
+        episode = sampler.sample(policy=policy, params=policy.state_dict(), gamma=args.gamma, device=args.device)
+        episodes.append(episode)
 
         # Tensorboard
         writer.add_scalar('total_rewards',
