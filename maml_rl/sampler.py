@@ -37,9 +37,7 @@ class BatchSampler(object):
             with torch.no_grad():
                 observations_tensor = torch.from_numpy(observations).to(device=device)
                 try:
-                    action_tmp = policy(observations_tensor.float(), params=params)
-                    action_tmp.probs = nn.functional.relu(action_tmp.probs)
-                    actions_tensor = action_tmp.sample()
+                    actions_tensor = policy(observations_tensor.float(), params=params).sample()
                     actions = actions_tensor.cpu().numpy()
 
                 except RuntimeError:
