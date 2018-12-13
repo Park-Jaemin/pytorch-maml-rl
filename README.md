@@ -60,4 +60,4 @@ MAML
 
 ## References
 This project is forked from [tristandeleu/pytorch-maml-rl](https://github.com/tristandeleu/pytorch-maml-rl).  
-Most codes are from this repository.  
+Most codes are from the repository.  
