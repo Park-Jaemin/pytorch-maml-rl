@@ -75,10 +75,13 @@ class MetaLearner(object):
         episodes = []
         for task in tasks:
             self.sampler.reset_task(task)
-            train_episodes = self.sampler.sample(self.policy,
-                gamma=self.gamma, device=self.device)
-
-            params = self.adapt(train_episodes, first_order=first_order)
+            train_episodes = self.sampler.sample(self.policy,gamma=self.gamma, device=self.device)
+            params = self.policy.parameters
+            try:
+                params = self.adapt(train_episodes, first_order=first_order)
+            except RuntimeError:
+                print('adapt error')
+                pass
 
             valid_episodes = self.sampler.sample(self.policy, params=params,
                 gamma=self.gamma, device=self.device)

@@ -11,16 +11,14 @@ from maml_rl.sampler import BatchSampler
 
 from tensorboardX import SummaryWriter
 
+
 def total_rewards(episodes_rewards, aggregation=torch.mean):
     rewards = torch.mean(torch.stack([aggregation(torch.sum(rewards, dim=0))
         for rewards in episodes_rewards], dim=0))
     return rewards.item()
 
-def main(args):
-    continuous_actions = (args.env_name in ['AntVel-v1', 'AntDir-v1',
-        'AntPos-v0', 'HalfCheetahVel-v1', 'HalfCheetahDir-v1',
-        '2DNavigation-v0'])
 
+def main(args):
     writer = SummaryWriter('./logs/{0}'.format(args.output_folder))
     save_folder = './saves/{0}'.format(args.output_folder)
     if not os.path.exists(save_folder):
@@ -33,18 +31,10 @@ def main(args):
     sampler = BatchSampler(args.env_name, batch_size=args.fast_batch_size,
         num_workers=args.num_workers)
 
-    #continuous_actions = True
-
-    if continuous_actions:
-        policy = NormalMLPPolicy(
-            int(np.prod(sampler.envs.observation_space.shape)),
-            int(np.prod(sampler.envs.action_space.shape)),
-            hidden_sizes=(args.hidden_size,) * args.num_layers)
-    else:
-        policy = CategoricalMLPPolicy(
-            int(np.prod(sampler.envs.observation_space.shape)),
-            sampler.envs.action_space.n,
-            hidden_sizes=(args.hidden_size,) * args.num_layers)
+    policy = CategoricalMLPPolicy(
+        int(np.prod(sampler.envs.observation_space.shape)),
+        sampler.envs.action_space.n,
+        hidden_sizes=(args.hidden_size,) * args.num_layers)
     baseline = LinearFeatureBaseline(
         int(np.prod(sampler.envs.observation_space.shape)))
 
@@ -52,6 +42,8 @@ def main(args):
         fast_lr=args.fast_lr, tau=args.tau, device=args.device)
 
     for batch in range(args.num_batches):
+        print(batch, 'th iter is running')
+
         tasks = sampler.sample_tasks(num_tasks=args.meta_batch_size)
         episodes = metalearner.sample(tasks, first_order=args.first_order)
         metalearner.step(episodes, max_kl=args.max_kl, cg_iters=args.cg_iters,
@@ -79,7 +71,7 @@ if __name__ == '__main__':
         'Model-Agnostic Meta-Learning (MAML)')
 
     # General
-    parser.add_argument('--env-name', type=str,
+    parser.add_argument('--env-name', type=str, default='BankHeist-ram-v0',
         help='name of the environment')
     parser.add_argument('--gamma', type=float, default=0.95,
         help='value of the discount factor gamma')
@@ -97,15 +89,15 @@ if __name__ == '__main__':
     # Task-specific
     parser.add_argument('--fast-batch-size', type=int, default=20,
         help='batch size for each individual task')
-    parser.add_argument('--fast-lr', type=float, default=0.5,
+    parser.add_argument('--fast-lr', type=float, default=0.1,
         help='learning rate for the 1-step gradient update of MAML')
 
     # Optimization
     parser.add_argument('--num-batches', type=int, default=200,
         help='number of batches')
-    parser.add_argument('--meta-batch-size', type=int, default=40,
+    parser.add_argument('--meta-batch-size', type=int, default=10,
         help='number of tasks per batch')
-    parser.add_argument('--max-kl', type=float, default=1e-2,
+    parser.add_argument('--max-kl', type=float, default=0.01,
         help='maximum value for the KL constraint in TRPO')
     parser.add_argument('--cg-iters', type=int, default=10,
         help='number of iterations of conjugate gradient')
@@ -114,10 +106,10 @@ if __name__ == '__main__':
     parser.add_argument('--ls-max-steps', type=int, default=15,
         help='maximum number of iterations for line search')
     parser.add_argument('--ls-backtrack-ratio', type=float, default=0.8,
-        help='maximum number of iterations for line search')
+        help='backtrack ratio for line search')
 
     # Miscellaneous
-    parser.add_argument('--output-folder', type=str, default='maml',
+    parser.add_argument('--output-folder', type=str, default='Atari',
         help='name of the output folder')
     parser.add_argument('--num-workers', type=int, default=mp.cpu_count() - 1,
         help='number of workers for trajectories sampling')
@@ -134,8 +126,5 @@ if __name__ == '__main__':
     # Device
     args.device = torch.device(args.device
         if torch.cuda.is_available() else 'cpu')
-    # Slurm
-    if 'SLURM_JOB_ID' in os.environ:
-        args.output_folder += '-{0}'.format(os.environ['SLURM_JOB_ID'])
 
     main(args)
