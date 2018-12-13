@@ -11,15 +11,15 @@ Create a virtual environment, activate it and install the requirements in [`requ
 ```
 virtualenv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
-## Usage
+## Run meta-learning
 You can use the [`main.py`](main.py) script in order to run reinforcement learning experiments with MAML. This script was tested with Python 3.6.  
 
 To run MAML
 ```
-python main.py --env-name BankHeist-ram-v0
+python3 main.py --env-name BankHeist-ram-v0
 ```
 * This code trains model for Atari games with 128 states, 18 actions.  
  You can change environments by changing maml_rl/sampler.py  
@@ -34,12 +34,23 @@ To see graph of the log
  ```
  tensorboard --logdir='./logs' --port=6006
  ```
+ 
+ ## Run reinforcement
 To run REINFORCEMENT for an environment
-
+```
+python3 reinforcement.py --env-name Alien-ram-v0 --trained-model True --trained-model-dir saves/Atari/policy-200.pt
+```
 
 ## Algorithm
 TRPO is used for meta-learner.  
 REINFORCEMENT is used for learner.  
+
+## Result
+Random Initialize  
+![image](https://user-images.githubusercontent.com/19935323/49953319-357ad680-ff41-11e8-845a-7d153885f896.png)
+
+MAML  
+![image](https://user-images.githubusercontent.com/19935323/49953295-28f67e00-ff41-11e8-9380-2ac84594fb4a.png)
 
 ## References
 This project is forked from [tristandeleu/pytorch-maml-rl](https://github.com/tristandeleu/pytorch-maml-rl).  
