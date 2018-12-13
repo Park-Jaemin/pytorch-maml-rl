@@ -40,6 +40,8 @@ To run REINFORCEMENT for an environment
 ```
 python3 reinforcement.py --env-name Alien-ram-v0 --trained-model True --trained-model-dir saves/Atari/policy-200.pt
 ```
+* If you check True for trained model, RL starts with the model in trained_model_dir
+ If you check False, RL starts with random initialized model
 
 To see graph of the log
 ```
