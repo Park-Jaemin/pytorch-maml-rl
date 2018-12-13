@@ -2,6 +2,7 @@ import gym
 import numpy as np
 import torch
 
+from maml_rl.metalearner import MetaLearner
 from maml_rl.policies import CategoricalMLPPolicy
 from maml_rl.baseline import LinearFeatureBaseline
 from maml_rl.sampler import BatchSampler
@@ -33,6 +34,9 @@ def main(args):
         check_point = torch.load(args.trained_model_dir)
         policy.load_state_dict(check_point)
 
+    metalearner = MetaLearner(sampler, policy, baseline, gamma=args.gamma,
+        fast_lr=args.lr, tau=args.tau, device=args.device)
+
     iter = 0
     while True:
         iter = iter + 1
@@ -41,6 +45,12 @@ def main(args):
         episodes = []
         sampler.reset_task(args.env_name)
         episode = sampler.sample(policy=policy, params=policy.state_dict(), gamma=args.gamma, device=args.device)
+
+        # learn policy
+        params = metalearner.adapt(episode)
+        policy.load_state_dict(params)
+        metalearner.policy = policy
+
         episodes.append(episode)
 
         # Tensorboard
