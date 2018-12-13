@@ -23,11 +23,11 @@ def main(args):
     sampler = BatchSampler(env_name=args.env_name, batch_size=args.batch_size, num_workers=args.num_workers)
 
     policy = CategoricalMLPPolicy(
-        int(np.prod(sampler.env.observation_space.shape)),
+        int(np.prod(sampler.envs.observation_space.shape)),
         sampler.envs.action_space.n,
         hidden_sizes=(args.hidden_size,) * args.num_layers)
     baseline = LinearFeatureBaseline(
-        int(np.prod(sampler.env.observation_space.shape)))
+        int(np.prod(sampler.envs.observation_space.shape)))
 
     if args.trained_model:
         check_point = torch.load(args.trained_model_dir)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
         'Model-Agnostic Meta-Learning (MAML)')
 
     # General
-    parser.add_argument('--env-name', type=str, default='BankHeist-ram-v0',
+    parser.add_argument('--env-name', type=str, default='Alien-ram-v0',
         help='name of the environment')
     parser.add_argument('--gamma', type=float, default=0.95,
         help='value of the discount factor gamma')

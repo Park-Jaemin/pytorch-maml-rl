@@ -46,7 +46,6 @@ class EnvWorker(mp.Process):
             elif command == 'reset_task':
                 #self.env.unwrapped.reset_task(data)
                 self.env = gym.make(data)
-                print(data)
                 self.remote.send(True)
             elif command == 'close':
                 self.remote.close()
