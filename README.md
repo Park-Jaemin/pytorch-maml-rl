@@ -29,7 +29,8 @@ python main.py --env-name BankHeist-ram-v0
  For now, you can run only on cpu.
 * Learned model is saved on saves/*env_name* as .pt file.  
 * Training log is saved on logs/*env_name*  
- To see graph of the log
+
+To see graph of the log
  ```
  tensorboard --logdir='./logs' --port=6006
  ```
